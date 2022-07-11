@@ -14,7 +14,7 @@ func WithIndentSize(size int) Option {
 	}
 }
 
-func WithCompactSequenceFormat(compact bool) Option {
+func WithCompactSequenceStyle(compact bool) Option {
 	return func(e *yaml.Encoder) {
 		if compact {
 			e.CompactSeqIndent()

@@ -1,13 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"os"
 
 	"github.com/jamesrom/yamlfmt"
 	flag "github.com/spf13/pflag"
-	yaml "sigs.k8s.io/yaml/goyaml.v3"
 )
 
 var (
@@ -33,19 +33,59 @@ func main() {
 		return
 	}
 
-	var err error
-	decoder := yaml.NewDecoder(os.Stdin)
-	encoder := yamlfmt.NewEncoder(
-		os.Stdout,
-		yamlfmt.WithCompactSequenceFormat(*compact),
-		yamlfmt.WithIndentSize(*tabsize),
-	)
-	defer encoder.Close()
-
-	for err == nil {
-		err = yamlfmt.Transcode(decoder, encoder)
+	if len(flag.Args()) < 1 {
+		err := yamlfmt.Ffmt(os.Stdin, os.Stdout, yamlfmt.WithCompactSequenceStyle(*compact), yamlfmt.WithIndentSize(*tabsize))
+		if err != nil {
+			panic(err)
+		}
 	}
-	if err != io.EOF {
-		panic(err)
+
+	for _, filePath := range flag.Args() {
+		in, err := os.Open(filePath)
+		defer in.Close()
+		if err != nil {
+			in.Close()
+			continue
+		}
+
+		// use an in-memory buffer for the output
+		var buf bytes.Buffer
+		var writer io.Writer
+		if *stdout {
+			writer = io.MultiWriter(&buf, os.Stdout)
+		} else if *inplace {
+			writer = &buf
+		} else {
+			writer = os.Stdout
+		}
+
+		// do it
+		err = yamlfmt.Ffmt(
+			in,
+			writer,
+			yamlfmt.WithCompactSequenceStyle(*compact),
+			yamlfmt.WithIndentSize(*tabsize),
+		)
+		in.Close()
+		if err != nil {
+			panic(err)
+		}
+
+		if *inplace {
+			out, err := os.OpenFile(filePath, os.O_WRONLY, os.ModePerm)
+			defer out.Close()
+			if err != nil {
+				panic(err)
+			}
+			n, err := io.Copy(out, &buf)
+			if err != nil {
+				panic(err)
+			}
+			out.Truncate(n)
+			if err != nil {
+				panic(err)
+			}
+			out.Close()
+		}
 	}
 }

@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.0
+	golang.org/x/text v0.3.7
 	sigs.k8s.io/yaml v1.3.0
 )
 
