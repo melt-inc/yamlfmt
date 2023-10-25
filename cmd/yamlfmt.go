@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/jamesrom/yamlfmt"
+	"github.com/melt-inc/yamlfmt"
 	flag "github.com/spf13/pflag"
 )
 
