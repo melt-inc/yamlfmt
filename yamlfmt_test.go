@@ -66,7 +66,7 @@ and: 'so is this'
 
 	reader := strings.NewReader(Simple)
 	writer := new(bytes.Buffer)
-	err = Ffmt(reader, writer, WithCompactSequenceStyle(false))
+	err = Ffmt(reader, writer)
 	require.NoError(t, err)
 	assert.Equal(t, `stack: "asd"
 test: 'this is a test'
@@ -79,11 +79,28 @@ func TestFileRead(t *testing.T) {
 	reader, err := os.Open("examples/comment.yaml")
 	require.NoError(t, err)
 	writer := new(bytes.Buffer)
-	err = Ffmt(reader, writer, WithCompactSequenceStyle(false))
+	err = Ffmt(reader, writer)
 	require.NoError(t, err)
 	assert.Equal(t, `stack: "asd"
 test: 'this is a test'
 # this is a comment
 and: 'so is this'
+hello:
+- you
+- world
+- universe
 `, writer.String())
+}
+
+// TestDefaults tests that yaml written in the goyaml.v2 style is the
+// default format for yamlfmt.
+func TestDefaults(t *testing.T) {
+	normalForm := `hello:
+- you
+- world
+- universe
+`
+	s, err := Sfmt(normalForm)
+	require.NoError(t, err)
+	assert.Equal(t, normalForm, s)
 }

@@ -26,6 +26,12 @@ func WithCompactSequenceStyle(compact bool) Option {
 
 func NewEncoder(w io.Writer, opts ...Option) *yaml.Encoder {
 	encoder := yaml.NewEncoder(w)
+
+	// defaults to match goyaml.v2
+	encoder.SetIndent(2)
+	encoder.CompactSeqIndent()
+
+	// can be overridden via opts
 	for _, opt := range opts {
 		opt(encoder)
 	}
