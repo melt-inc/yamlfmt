@@ -33,6 +33,7 @@ func main() {
 		return
 	}
 
+	// if no flags given, read from stdin
 	if len(flag.Args()) < 1 {
 		err := yamlfmt.Ffmt(os.Stdin, os.Stdout, yamlfmt.WithCompactSequenceStyle(*compact), yamlfmt.WithIndentSize(*tabsize))
 		if err != nil {
@@ -42,11 +43,11 @@ func main() {
 
 	for _, filePath := range flag.Args() {
 		in, err := os.Open(filePath)
-		defer in.Close()
 		if err != nil {
 			in.Close()
 			continue
 		}
+		defer in.Close()
 
 		// use an in-memory buffer for the output
 		var buf bytes.Buffer

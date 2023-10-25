@@ -1,12 +1,12 @@
 module github.com/jamesrom/yamlfmt
 
-go 1.18
+go 1.21.3
 
 require (
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.0
 	golang.org/x/text v0.3.7
-	sigs.k8s.io/yaml v1.3.0
+	sigs.k8s.io/yaml v1.4.0
 )
 
 require (
@@ -16,6 +16,3 @@ require (
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-// Once https://github.com/kubernetes-sigs/yaml/pull/76 lands, remove this
-replace sigs.k8s.io/yaml v1.3.0 => github.com/natasha41575/yaml-1 v1.3.1-0.20220514005426-0e00b683066c
